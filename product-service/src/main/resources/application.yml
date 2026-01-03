@@ -1,0 +1,32 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: product-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3307/product_service?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: product_user
+    password: product_pass
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/microservices-realm
+
+logging:
+  level:
+    ma.enset.productservice: DEBUG
+    org.springframework.security: DEBUG

@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: microservices-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: microservices
+      MYSQL_USER: microservices_user
+      MYSQL_PASSWORD: microservices_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - microservices-network
+
+  mysql-product-service:
+    image: mysql:8.0
+    container_name: mysql-product-service
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: product_service
+      MYSQL_USER: product_user
+      MYSQL_PASSWORD: product_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_product_data:/var/lib/mysql
+    networks:
+      - microservices-network
+
+  mysql-order-service:
+    image: mysql:8.0
+    container_name: mysql-order-service
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: order_service
+      MYSQL_USER: order_user
+      MYSQL_PASSWORD: order_pass
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_order_data:/var/lib/mysql
+    networks:
+      - microservices-network
+
+volumes:
+  mysql_data:
+  mysql_product_data:
+  mysql_order_data:
+
+networks:
+  microservices-network:
+    driver: bridge
