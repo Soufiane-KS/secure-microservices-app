@@ -1,8 +1,8 @@
-# 🛒 Microservices E-commerce Platform
+# 🛒 Secure Microservices E-commerce Platform
 
-A comprehensive microservices-based e-commerce platform built with Spring Boot, React, MySQL, and Keycloak for OAuth2 authentication.
+A microservices-based e-commerce platform built with Spring Boot, React, MySQL, and Keycloak for authentication.
 
-## 🏗️ Architecture Overview
+## 🏗️ Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -22,7 +22,7 @@ A comprehensive microservices-based e-commerce platform built with Spring Boot, 
 
 ## 🚀 Features
 
-### **🔐 Security & Authentication**
+### **🔐 Authentication & Security**
 - OAuth2/OIDC with Keycloak
 - JWT token-based authentication
 - Zero-trust security model
@@ -47,8 +47,8 @@ A comprehensive microservices-based e-commerce platform built with Spring Boot, 
 - Docker containerization
 - Data initialization
 
-### **🎨 User Interface**
-- Modern React frontend
+### **🎨 Frontend**
+- Modern React application
 - Product catalog browsing
 - Interactive order forms
 - Real-time cart management
@@ -66,16 +66,13 @@ A comprehensive microservices-based e-commerce platform built with Spring Boot, 
 
 ### **1. Start Infrastructure**
 ```bash
-# Start MySQL containers
 docker-compose up -d
 ```
 
 ### **2. Start Keycloak**
-```bash
-# Start Keycloak server (separate from this project)
-# Configure realm: microservices-realm
-# Configure client: react-client
-```
+Start Keycloak server and configure:
+- Realm: `microservices-realm`
+- Client: `react-client`
 
 ### **3. Start Microservices**
 ```bash
@@ -101,13 +98,13 @@ npm start
 
 ## 🌐 Access URLs
 
-| Service          | URL                          | Description                     |
-|------------------|------------------------------|---------------------------------|
-| React App        | http://localhost:3000        | Frontend application            |
-| API Gateway      | http://localhost:8085        | API Gateway endpoint           |
-| Product Service  | http://localhost:8081        | Product microservice           |
-| Order Service    | http://localhost:8082        | Order microservice             |
-| Keycloak         | http://localhost:8080        | Authentication server          |
+| Service          | URL                          |
+|------------------|------------------------------|
+| React App        | http://localhost:3000        |
+| API Gateway      | http://localhost:8085        |
+| Product Service  | http://localhost:8081        |
+| Order Service    | http://localhost:8082        |
+| Keycloak         | http://localhost:8080        |
 
 ## 🗄️ Database Configuration
 
@@ -162,7 +159,7 @@ datasource:
 - **Valid Redirect URIs**: `http://localhost:3000/*`
 
 ### **JWT Validation**
-All microservices validate JWT tokens from Keycloak using the issuer URI:
+All microservices validate JWT tokens from Keycloak:
 ```
 http://localhost:8080/realms/microservices-realm
 ```
@@ -170,7 +167,7 @@ http://localhost:8080/realms/microservices-realm
 ## 🧪 Testing
 
 ### **Sample Data**
-The application automatically initializes sample data:
+The application initializes sample data:
 - **10 Products**: Laptops, phones, tablets, accessories
 - **5 Orders**: Sample orders with various statuses
 
@@ -284,18 +281,6 @@ logging:
 - Container orchestration (Kubernetes)
 - Service discovery
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch
-3. Make your changes
-4. Add tests
-5. Submit pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
 ## 🆘 Troubleshooting
 
 ### **Common Issues**
@@ -342,4 +327,4 @@ For support and questions:
 
 ---
 
-**Built with ❤️ using Spring Boot, React, MySQL, and Keycloak**
+**Built with Spring Boot, React, MySQL, and Keycloak**
