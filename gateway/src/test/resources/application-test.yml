@@ -1,0 +1,27 @@
+server:
+  port: 0
+
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:9999/realms/test
+        registration:
+          keycloak:
+            client-id: test-client
+            client-secret: test-secret
+            scope:
+              - openid
+              - profile
+  
+  cloud:
+    gateway:
+      routes: []
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
