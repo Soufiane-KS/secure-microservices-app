@@ -282,7 +282,8 @@ export default function Dashboard({ keycloak }: DashboardProps) {
       order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.customerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.id.toString().includes(searchQuery);
-    const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -396,7 +397,9 @@ export default function Dashboard({ keycloak }: DashboardProps) {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold tracking-tight">Products</h2>
+                  <h2 className="text-3xl font-bold tracking-tight">
+                    Products
+                  </h2>
                   <p className="text-muted-foreground">
                     Manage your product inventory
                   </p>
@@ -419,7 +422,9 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                       {/* Customer Info */}
                       <div className="grid gap-4 md:grid-cols-2">
                         <div className="space-y-2">
-                          <label className="text-sm font-medium">Full Name</label>
+                          <label className="text-sm font-medium">
+                            Full Name
+                          </label>
                           <Input
                             value={customerInfo.customerName}
                             onChange={(e) =>
@@ -449,16 +454,24 @@ export default function Dashboard({ keycloak }: DashboardProps) {
 
                       {/* Product Selection */}
                       <div className="space-y-4">
-                        <h3 className="text-lg font-semibold">Select Products</h3>
+                        <h3 className="text-lg font-semibold">
+                          Select Products
+                        </h3>
                         <div className="grid gap-3 sm:grid-cols-2">
                           {products.map((product) => (
-                            <Card key={product.id} className="hover:shadow-md transition-shadow">
+                            <Card
+                              key={product.id}
+                              className="hover:shadow-md transition-shadow"
+                            >
                               <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
                                   <div>
-                                    <p className="font-medium">{product.name}</p>
+                                    <p className="font-medium">
+                                      {product.name}
+                                    </p>
                                     <p className="text-sm text-muted-foreground">
-                                      ${product.price} • Stock: {product.quantity}
+                                      ${product.price} • Stock:{" "}
+                                      {product.quantity}
                                     </p>
                                   </div>
                                   <Button
@@ -560,7 +573,9 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                   >
                     <CardHeader>
                       <div className="flex items-start justify-between">
-                        <CardTitle className="text-xl">{product.name}</CardTitle>
+                        <CardTitle className="text-xl">
+                          {product.name}
+                        </CardTitle>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
@@ -598,7 +613,9 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                         onClick={() => addProductToOrder(product)}
                         disabled={product.quantity === 0}
                       >
-                        {product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
+                        {product.quantity === 0
+                          ? "Out of Stock"
+                          : "Add to Cart"}
                       </Button>
                     </CardFooter>
                   </Card>
@@ -665,7 +682,9 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                   <TableBody>
                     {paginatedOrders.map((order) => (
                       <TableRow key={order.id}>
-                        <TableCell className="font-medium">#{order.id}</TableCell>
+                        <TableCell className="font-medium">
+                          #{order.id}
+                        </TableCell>
                         <TableCell>
                           <div>
                             <p className="font-medium">{order.customerName}</p>
@@ -749,8 +768,8 @@ export default function Dashboard({ keycloak }: DashboardProps) {
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                  {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of{" "}
-                  {filteredOrders.length} results
+                  {Math.min(currentPage * itemsPerPage, filteredOrders.length)}{" "}
+                  of {filteredOrders.length} results
                 </p>
                 <div className="flex items-center gap-2">
                   <Button
@@ -806,7 +825,9 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Username</label>
                         <Input
-                          value={keycloak.idTokenParsed?.preferred_username || ""}
+                          value={
+                            keycloak.idTokenParsed?.preferred_username || ""
+                          }
                           disabled
                         />
                       </div>
@@ -861,7 +882,10 @@ export default function Dashboard({ keycloak }: DashboardProps) {
 
       {/* Order Details Dialog */}
       {selectedOrder && (
-        <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
+        <Dialog
+          open={!!selectedOrder}
+          onOpenChange={() => setSelectedOrder(null)}
+        >
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Order Details #{selectedOrder.id}</DialogTitle>
@@ -878,7 +902,9 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                   <p className="font-semibold">{selectedOrder.customerName}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Email</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Email
+                  </p>
                   <p className="font-semibold">{selectedOrder.customerEmail}</p>
                 </div>
                 <div>
@@ -890,7 +916,9 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Status</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Status
+                  </p>
                   {getStatusBadge(selectedOrder.status)}
                 </div>
               </div>
@@ -907,7 +935,9 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                         <span>
                           {item.productName} × {item.quantity}
                         </span>
-                        <span className="font-semibold">${item.totalPrice}</span>
+                        <span className="font-semibold">
+                          ${item.totalPrice}
+                        </span>
                       </div>
                     ))}
                   </div>

@@ -57,9 +57,7 @@ export function Sidebar({ activeView, onViewChange, isAdmin }: SidebarProps) {
     },
   ];
 
-  const filteredItems = menuItems.filter(
-    (item) => !item.adminOnly || isAdmin
-  );
+  const filteredItems = menuItems.filter((item) => !item.adminOnly || isAdmin);
 
   return (
     <div className="hidden md:flex h-full w-64 flex-col fixed left-0 top-16 bottom-0 border-r bg-muted/10">

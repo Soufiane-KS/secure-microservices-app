@@ -556,7 +556,10 @@ export default function Dashboard({ keycloak }: DashboardProps) {
             ) : (
               <div className="space-y-6">
                 {orders.map((order) => (
-                  <Card key={order.id} className="transition-shadow hover:shadow-lg">
+                  <Card
+                    key={order.id}
+                    className="transition-shadow hover:shadow-lg"
+                  >
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <CardTitle>Order #{order.id}</CardTitle>

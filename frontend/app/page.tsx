@@ -41,8 +41,18 @@ export default function Home() {
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-50 to-orange-50">
         <div className="text-center space-y-4 p-8 bg-white rounded-lg shadow-xl">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100">
-            <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-8 h-8 text-red-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-red-600">
@@ -69,4 +79,3 @@ export default function Home() {
     </>
   );
 }
-
