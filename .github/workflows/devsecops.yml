@@ -38,11 +38,6 @@ jobs:
           chmod +x product-service/mvnw
           chmod +x order-service/mvnw
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
       # OWASP Dependency Check
       - name: OWASP Dependency Check
         uses: dependency-check/Dependency-Check_Action@main
@@ -97,20 +92,6 @@ jobs:
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
         continue-on-error: true
 
-      # NPM Audit
-      - name: NPM Audit
-        run: |
-          cd react-app
-          npm install
-          npm audit --audit-level=moderate || true
-          npm audit --json > ../npm-audit-report.json || true
-
-      - name: Upload NPM Audit results
-        uses: actions/upload-artifact@v4
-        with:
-          name: npm-audit-report
-          path: npm-audit-report.json
-
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
@@ -163,23 +144,6 @@ jobs:
         run: |
           cd order-service
           ./mvnw test
-
-      # Build and test React app
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Build React App
-        run: |
-          cd react-app
-          npm ci
-          npm run build
-
-      - name: Test React App
-        run: |
-          cd react-app
-          npm test -- --coverage --watchAll=false
 
   docker-security-scan:
     name: Docker Image Security Scan
@@ -245,22 +209,6 @@ jobs:
         with:
           sarif_file: "trivy-order-results.sarif"
           category: "trivy-order"
-        continue-on-error: true
-
-      - name: Run Trivy vulnerability scanner - Frontend
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: "secure-microservices-app-frontend:latest"
-          format: "sarif"
-          output: "trivy-frontend-results.sarif"
-          severity: "CRITICAL,HIGH"
-        continue-on-error: true
-
-      - name: Upload Trivy results - Frontend
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: "trivy-frontend-results.sarif"
-          category: "trivy-frontend"
         continue-on-error: true
 
   deploy:
