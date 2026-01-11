@@ -16,7 +16,6 @@ spring:
       server:
         webflux:
           routes:
-
             - id: product-service
               uri: http://localhost:8081
               predicates:
@@ -26,3 +25,41 @@ spring:
               uri: http://localhost:8082
               predicates:
                 - Path=/orders/**
+
+# Actuator configuration for health checks and metrics
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    gateway:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+# Comprehensive logging configuration
+logging:
+  level:
+    root: INFO
+    ma.enset.gateway: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+    org.springframework.cloud.gateway: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - [User: %X{username}] [TraceId: %X{traceId}] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - [User: %X{username}] [TraceId: %X{traceId}] [IP: %X{clientIp}] - %msg%n"
+  file:
+    name: logs/gateway.log
+    max-size: 10MB
+    max-history: 30
+    total-size-cap: 1GB

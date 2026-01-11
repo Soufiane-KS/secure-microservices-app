@@ -26,7 +26,39 @@ spring:
         jwt:
           issuer-uri: http://localhost:8080/realms/microservices-realm
 
+# Actuator configuration for health checks and metrics
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+# Comprehensive logging configuration
 logging:
   level:
+    root: INFO
     ma.enset.orderservice: DEBUG
     org.springframework.security: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - [User: %X{username}] [TraceId: %X{traceId}] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - [User: %X{username}] [TraceId: %X{traceId}] [IP: %X{clientIp}] - %msg%n"
+  file:
+    name: logs/order-service.log
+    max-size: 10MB
+    max-history: 30
+    total-size-cap: 1GB
