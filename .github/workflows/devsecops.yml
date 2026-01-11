@@ -32,6 +32,12 @@ jobs:
                   distribution: "temurin"
                   cache: maven
 
+            - name: Make Maven Wrapper executable
+              run: |
+                  chmod +x gateway/mvnw
+                  chmod +x product-service/mvnw
+                  chmod +x order-service/mvnw
+
             - name: Set up Node.js
               uses: actions/setup-node@v4
               with:
@@ -122,6 +128,12 @@ jobs:
                   java-version: "21"
                   distribution: "temurin"
                   cache: maven
+
+            - name: Make Maven Wrapper executable
+              run: |
+                  chmod +x gateway/mvnw
+                  chmod +x product-service/mvnw
+                  chmod +x order-service/mvnw
 
             # Build and test Java services
             - name: Build Gateway
