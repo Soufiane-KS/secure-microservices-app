@@ -245,10 +245,11 @@ export default function Dashboard({ keycloak }: DashboardProps) {
     return <Badge variant={variants[status] || "secondary"}>{status}</Badge>;
   };
 
-  const isAdmin =
+  const isAdmin = Boolean(
     keycloak.tokenParsed?.resource_access?.["react-client"]?.roles?.includes(
       "admin"
-    );
+    )
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">

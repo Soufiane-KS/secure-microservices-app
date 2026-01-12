@@ -120,10 +120,23 @@ export default function Dashboard({ keycloak }: DashboardProps) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const itemsPerPage = 10;
 
-  const isAdmin =
+  const isAdmin = Boolean(
     keycloak.tokenParsed?.resource_access?.["react-client"]?.roles?.includes(
       "admin"
+    )
+  );
+
+  // Debug logging to help troubleshoot role issues
+  useEffect(() => {
+    console.log("Keycloak Token Info:");
+    console.log("- Username:", keycloak.tokenParsed?.preferred_username);
+    console.log("- Resource Access:", keycloak.tokenParsed?.resource_access);
+    console.log(
+      "- React Client Roles:",
+      keycloak.tokenParsed?.resource_access?.["react-client"]?.roles
     );
+    console.log("- Is Admin:", isAdmin);
+  }, [isAdmin]);
 
   useEffect(() => {
     loadProducts();
@@ -304,28 +317,50 @@ export default function Dashboard({ keycloak }: DashboardProps) {
   ).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className={`min-h-screen ${isAdmin ? 'bg-gradient-to-br from-orange-50 via-red-50 to-pink-50' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50'}`}>
+      {/* Role Badge Banner - VERY VISIBLE */}
+      <div className={`${isAdmin ? 'bg-gradient-to-r from-red-600 via-orange-600 to-red-700' : 'bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600'} text-white py-2 px-4 text-center font-bold text-sm shadow-lg`}>
+        {isAdmin ? (
+          <div className="flex items-center justify-center gap-2">
+            <span className="animate-pulse">🔐</span>
+            <span>ADMINISTRATOR MODE - Full System Access</span>
+            <span className="animate-pulse">🔐</span>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-2">
+            <span>👤</span>
+            <span>USER MODE - Personal Shopping Dashboard</span>
+            <span>👤</span>
+          </div>
+        )}
+      </div>
+
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className={`sticky top-0 z-50 w-full border-b ${isAdmin ? 'bg-red-50/95 border-red-200' : 'bg-blue-50/95 border-blue-200'} backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
-            <ShoppingBag className="h-8 w-8 text-purple-600" />
-            <h1 className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-2xl font-bold text-transparent">
-              Secure Microservices
-            </h1>
+            <ShoppingBag className={`h-8 w-8 ${isAdmin ? 'text-red-600' : 'text-purple-600'}`} />
+            <div>
+              <h1 className={`bg-gradient-to-r ${isAdmin ? 'from-red-600 to-orange-600' : 'from-purple-600 to-blue-600'} bg-clip-text text-2xl font-bold text-transparent`}>
+                Secure Microservices
+              </h1>
+              <Badge variant={isAdmin ? "destructive" : "default"} className="text-xs">
+                {isAdmin ? "ADMIN PANEL" : "User Portal"}
+              </Badge>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
-                3
+              <span className={`absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full ${isAdmin ? 'bg-red-600' : 'bg-blue-600'} text-[10px] text-white`}>
+                {isAdmin ? pendingOrders : 3}
               </span>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-3">
                   <Avatar>
-                    <AvatarFallback className="bg-gradient-to-br from-purple-600 to-blue-600 text-white">
+                    <AvatarFallback className={`${isAdmin ? 'bg-gradient-to-br from-red-600 to-orange-600' : 'bg-gradient-to-br from-purple-600 to-blue-600'} text-white`}>
                       {keycloak.idTokenParsed?.preferred_username
                         ?.charAt(0)
                         .toUpperCase()}
@@ -335,14 +370,16 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                     <p className="text-sm font-medium">
                       {keycloak.idTokenParsed?.preferred_username}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      {isAdmin ? "Administrator" : "User"}
-                    </p>
+                    <Badge variant={isAdmin ? "destructive" : "secondary"} className="text-xs">
+                      {isAdmin ? "👑 Administrator" : "👤 User"}
+                    </Badge>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  {isAdmin ? "Admin Account" : "My Account"}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <Settings className="mr-2 h-4 w-4" />
