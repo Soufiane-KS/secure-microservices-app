@@ -291,13 +291,17 @@ export default function Dashboard({ keycloak }: DashboardProps) {
 
   // Filter and pagination
   const filteredOrders = orders.filter((order) => {
+    // Non-admin users can only see their own orders
+    const isOwnOrder =
+      isAdmin || order.customerEmail === keycloak.tokenParsed?.email;
+
     const matchesSearch =
       order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.customerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.id.toString().includes(searchQuery);
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    return isOwnOrder && matchesSearch && matchesStatus;
   });
 
   const paginatedOrders = filteredOrders.slice(
@@ -317,9 +321,21 @@ export default function Dashboard({ keycloak }: DashboardProps) {
   ).length;
 
   return (
-    <div className={`min-h-screen ${isAdmin ? 'bg-gradient-to-br from-orange-50 via-red-50 to-pink-50' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50'}`}>
+    <div
+      className={`min-h-screen ${
+        isAdmin
+          ? "bg-gradient-to-br from-orange-50 via-red-50 to-pink-50"
+          : "bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50"
+      }`}
+    >
       {/* Role Badge Banner - VERY VISIBLE */}
-      <div className={`${isAdmin ? 'bg-gradient-to-r from-red-600 via-orange-600 to-red-700' : 'bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600'} text-white py-2 px-4 text-center font-bold text-sm shadow-lg`}>
+      <div
+        className={`${
+          isAdmin
+            ? "bg-gradient-to-r from-red-600 via-orange-600 to-red-700"
+            : "bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600"
+        } text-white py-2 px-4 text-center font-bold text-sm shadow-lg`}
+      >
         {isAdmin ? (
           <div className="flex items-center justify-center gap-2">
             <span className="animate-pulse">🔐</span>
@@ -336,15 +352,34 @@ export default function Dashboard({ keycloak }: DashboardProps) {
       </div>
 
       {/* Header */}
-      <header className={`sticky top-0 z-50 w-full border-b ${isAdmin ? 'bg-red-50/95 border-red-200' : 'bg-blue-50/95 border-blue-200'} backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
+      <header
+        className={`sticky top-0 z-50 w-full border-b ${
+          isAdmin
+            ? "bg-red-50/95 border-red-200"
+            : "bg-blue-50/95 border-blue-200"
+        } backdrop-blur supports-[backdrop-filter]:bg-background/60`}
+      >
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
-            <ShoppingBag className={`h-8 w-8 ${isAdmin ? 'text-red-600' : 'text-purple-600'}`} />
+            <ShoppingBag
+              className={`h-8 w-8 ${
+                isAdmin ? "text-red-600" : "text-purple-600"
+              }`}
+            />
             <div>
-              <h1 className={`bg-gradient-to-r ${isAdmin ? 'from-red-600 to-orange-600' : 'from-purple-600 to-blue-600'} bg-clip-text text-2xl font-bold text-transparent`}>
+              <h1
+                className={`bg-gradient-to-r ${
+                  isAdmin
+                    ? "from-red-600 to-orange-600"
+                    : "from-purple-600 to-blue-600"
+                } bg-clip-text text-2xl font-bold text-transparent`}
+              >
                 Secure Microservices
               </h1>
-              <Badge variant={isAdmin ? "destructive" : "default"} className="text-xs">
+              <Badge
+                variant={isAdmin ? "destructive" : "default"}
+                className="text-xs"
+              >
                 {isAdmin ? "ADMIN PANEL" : "User Portal"}
               </Badge>
             </div>
@@ -352,7 +387,11 @@ export default function Dashboard({ keycloak }: DashboardProps) {
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <span className={`absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full ${isAdmin ? 'bg-red-600' : 'bg-blue-600'} text-[10px] text-white`}>
+              <span
+                className={`absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full ${
+                  isAdmin ? "bg-red-600" : "bg-blue-600"
+                } text-[10px] text-white`}
+              >
                 {isAdmin ? pendingOrders : 3}
               </span>
             </Button>
@@ -360,7 +399,13 @@ export default function Dashboard({ keycloak }: DashboardProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-3">
                   <Avatar>
-                    <AvatarFallback className={`${isAdmin ? 'bg-gradient-to-br from-red-600 to-orange-600' : 'bg-gradient-to-br from-purple-600 to-blue-600'} text-white`}>
+                    <AvatarFallback
+                      className={`${
+                        isAdmin
+                          ? "bg-gradient-to-br from-red-600 to-orange-600"
+                          : "bg-gradient-to-br from-purple-600 to-blue-600"
+                      } text-white`}
+                    >
                       {keycloak.idTokenParsed?.preferred_username
                         ?.charAt(0)
                         .toUpperCase()}
@@ -370,7 +415,10 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                     <p className="text-sm font-medium">
                       {keycloak.idTokenParsed?.preferred_username}
                     </p>
-                    <Badge variant={isAdmin ? "destructive" : "secondary"} className="text-xs">
+                    <Badge
+                      variant={isAdmin ? "destructive" : "secondary"}
+                      className="text-xs"
+                    >
                       {isAdmin ? "👑 Administrator" : "👤 User"}
                     </Badge>
                   </div>
@@ -408,16 +456,67 @@ export default function Dashboard({ keycloak }: DashboardProps) {
           {/* Dashboard View */}
           {activeView === "dashboard" && (
             <div className="space-y-8">
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-                <p className="text-muted-foreground">
-                  Welcome back! Here's what's happening with your store.
-                </p>
-              </div>
+              {/* Admin Dashboard Header */}
+              {isAdmin ? (
+                <div
+                  className={`rounded-lg border-2 ${
+                    isAdmin
+                      ? "border-red-300 bg-red-50"
+                      : "border-blue-300 bg-blue-50"
+                  } p-6`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h2 className="text-3xl font-bold tracking-tight text-red-700">
+                        🔐 Administrator Control Panel
+                      </h2>
+                      <p className="text-red-600 font-medium mt-2">
+                        Full system access - Manage all products, orders, and
+                        users
+                      </p>
+                      <div className="flex gap-2 mt-3">
+                        <Badge variant="destructive">All Orders Visible</Badge>
+                        <Badge variant="destructive">Product Management</Badge>
+                        <Badge variant="destructive">Order Control</Badge>
+                      </div>
+                    </div>
+                    <div className="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg">
+                      ADMIN
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-6">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h2 className="text-3xl font-bold tracking-tight text-blue-700">
+                        👤 Welcome to Your Dashboard
+                      </h2>
+                      <p className="text-blue-600 font-medium mt-2">
+                        Browse products and manage your personal orders
+                      </p>
+                      <div className="flex gap-2 mt-3">
+                        <Badge variant="secondary">Shopping</Badge>
+                        <Badge variant="secondary">My Orders Only</Badge>
+                        <Badge variant="secondary">Order Tracking</Badge>
+                      </div>
+                    </div>
+                    <div className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-lg">
+                      USER
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <StatsCards
                 totalProducts={products.length}
-                totalOrders={orders.length}
+                totalOrders={
+                  isAdmin
+                    ? orders.length
+                    : orders.filter(
+                        (o) => o.customerEmail === keycloak.tokenParsed?.email
+                      ).length
+                }
                 totalRevenue={totalRevenue}
                 pendingOrders={pendingOrders}
               />
@@ -432,13 +531,59 @@ export default function Dashboard({ keycloak }: DashboardProps) {
           {/* Products View */}
           {activeView === "products" && (
             <div className="space-y-6">
+              {/* Role-specific header */}
+              <Card
+                className={`${
+                  isAdmin
+                    ? "border-red-300 bg-red-50"
+                    : "border-blue-300 bg-blue-50"
+                }`}
+              >
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle
+                        className={`text-2xl ${
+                          isAdmin ? "text-red-700" : "text-blue-700"
+                        }`}
+                      >
+                        {isAdmin
+                          ? "🔧 Product Management (Admin)"
+                          : "🛍️ Browse Products"}
+                      </CardTitle>
+                      <CardDescription
+                        className={`${
+                          isAdmin ? "text-red-600" : "text-blue-600"
+                        } font-medium`}
+                      >
+                        {isAdmin
+                          ? "Full product inventory control - Add, edit, and manage stock"
+                          : "Browse our product catalog and add items to your order"}
+                      </CardDescription>
+                    </div>
+                    <Badge
+                      variant={isAdmin ? "destructive" : "default"}
+                      className="text-lg px-4 py-2"
+                    >
+                      {isAdmin ? "ADMIN VIEW" : "USER VIEW"}
+                    </Badge>
+                  </div>
+                </CardHeader>
+              </Card>
+
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold tracking-tight">
-                    Products
+                  <h2
+                    className={`text-3xl font-bold tracking-tight ${
+                      isAdmin ? "text-red-700" : "text-blue-700"
+                    }`}
+                  >
+                    Products Catalog
                   </h2>
                   <p className="text-muted-foreground">
-                    Manage your product inventory
+                    {isAdmin
+                      ? "Manage your product inventory"
+                      : "Available products for purchase"}
                   </p>
                 </div>
                 <Dialog>
@@ -606,36 +751,57 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                 {products.map((product) => (
                   <Card
                     key={product.id}
-                    className="transition-all hover:shadow-xl hover:scale-[1.02]"
+                    className={`transition-all hover:shadow-xl hover:scale-[1.02] ${
+                      isAdmin
+                        ? "border-red-200 hover:border-red-400"
+                        : "border-blue-200 hover:border-blue-400"
+                    }`}
                   >
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <CardTitle className="text-xl">
                           {product.name}
+                          {isAdmin && (
+                            <Badge
+                              variant="destructive"
+                              className="ml-2 text-xs"
+                            >
+                              ADMIN
+                            </Badge>
+                          )}
                         </CardTitle>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Eye className="mr-2 h-4 w-4" />
-                              View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        {isAdmin && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel className="text-red-600">
+                                Admin Tools
+                              </DropdownMenuLabel>
+                              <DropdownMenuItem>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit Product
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
                       </div>
                       <CardDescription>{product.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        <div className="text-3xl font-bold text-purple-600">
+                        <div
+                          className={`text-3xl font-bold ${
+                            isAdmin ? "text-red-600" : "text-purple-600"
+                          }`}
+                        >
                           ${product.price}
                         </div>
                         {getStockBadge(product.quantity)}
@@ -646,12 +812,16 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                     </CardContent>
                     <CardFooter>
                       <Button
-                        className="w-full"
+                        className={`w-full ${
+                          isAdmin ? "bg-red-600 hover:bg-red-700" : ""
+                        }`}
                         onClick={() => addProductToOrder(product)}
                         disabled={product.quantity === 0}
                       >
                         {product.quantity === 0
                           ? "Out of Stock"
+                          : isAdmin
+                          ? "Add to Order (Admin)"
                           : "Add to Cart"}
                       </Button>
                     </CardFooter>
@@ -664,17 +834,77 @@ export default function Dashboard({ keycloak }: DashboardProps) {
           {/* Orders View */}
           {activeView === "orders" && (
             <div className="space-y-6">
+              {/* Role-specific header */}
+              <Card
+                className={`${
+                  isAdmin
+                    ? "border-red-300 bg-red-50"
+                    : "border-blue-300 bg-blue-50"
+                }`}
+              >
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle
+                        className={`text-2xl ${
+                          isAdmin ? "text-red-700" : "text-blue-700"
+                        }`}
+                      >
+                        {isAdmin
+                          ? "📋 All Orders Management (Admin)"
+                          : "📦 My Orders"}
+                      </CardTitle>
+                      <CardDescription
+                        className={`${
+                          isAdmin ? "text-red-600" : "text-blue-600"
+                        } font-medium`}
+                      >
+                        {isAdmin
+                          ? "View and manage ALL customer orders - Update status, track shipments"
+                          : "View and track your personal orders"}
+                      </CardDescription>
+                    </div>
+                    <div>
+                      <Badge
+                        variant={isAdmin ? "destructive" : "default"}
+                        className="text-lg px-4 py-2"
+                      >
+                        {isAdmin
+                          ? `ALL ${filteredOrders.length} ORDERS`
+                          : `MY ${
+                              filteredOrders.filter(
+                                (o) =>
+                                  o.customerEmail ===
+                                  keycloak.tokenParsed?.email
+                              ).length
+                            } ORDERS`}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold tracking-tight">Orders</h2>
+                  <h2
+                    className={`text-3xl font-bold tracking-tight ${
+                      isAdmin ? "text-red-700" : "text-blue-700"
+                    }`}
+                  >
+                    {isAdmin ? "All Orders" : "My Orders"}
+                  </h2>
                   <p className="text-muted-foreground">
-                    Manage and track all orders
+                    {isAdmin
+                      ? "Manage and track all customer orders"
+                      : "Track your order history and status"}
                   </p>
                 </div>
-                <Button variant="outline">
-                  <Download className="mr-2 h-4 w-4" />
-                  Export
-                </Button>
+                {isAdmin && (
+                  <Button variant="outline">
+                    <Download className="mr-2 h-4 w-4" />
+                    Export All
+                  </Button>
+                )}
               </div>
 
               {/* Filters */}
@@ -717,86 +947,122 @@ export default function Dashboard({ keycloak }: DashboardProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">
-                          #{order.id}
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">{order.customerName}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {order.customerEmail}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {new Date(order.createdAt).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(order.status)}</TableCell>
-                        <TableCell className="font-semibold">
-                          ${order.totalAmount.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => setSelectedOrder(order)}
-                              >
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Details
-                              </DropdownMenuItem>
-                              {isAdmin && (
-                                <>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      updateOrderStatus(order.id, "CONFIRMED")
-                                    }
-                                    disabled={order.status === "CONFIRMED"}
-                                  >
-                                    <CheckCircle className="mr-2 h-4 w-4" />
-                                    Confirm
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      updateOrderStatus(order.id, "SHIPPED")
-                                    }
-                                    disabled={order.status === "SHIPPED"}
-                                  >
-                                    <Truck className="mr-2 h-4 w-4" />
-                                    Ship
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      updateOrderStatus(order.id, "DELIVERED")
-                                    }
-                                    disabled={order.status === "DELIVERED"}
-                                  >
-                                    <PackageCheck className="mr-2 h-4 w-4" />
-                                    Deliver
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      updateOrderStatus(order.id, "CANCELLED")
-                                    }
-                                    disabled={order.status === "CANCELLED"}
-                                  >
-                                    <XCircle className="mr-2 h-4 w-4" />
-                                    Cancel
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                    {paginatedOrders.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8">
+                          <Package className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+                          <p className="text-muted-foreground">
+                            {isAdmin
+                              ? "No orders found"
+                              : "You have no orders yet"}
+                          </p>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ) : (
+                      paginatedOrders.map((order) => (
+                        <TableRow
+                          key={order.id}
+                          className={
+                            isAdmin ? "hover:bg-red-50" : "hover:bg-blue-50"
+                          }
+                        >
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              #{order.id}
+                              {isAdmin &&
+                                order.customerEmail ===
+                                  keycloak.tokenParsed?.email && (
+                                  <Badge variant="outline" className="text-xs">
+                                    Your Order
+                                  </Badge>
+                                )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">
+                                {order.customerName}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {order.customerEmail}
+                              </p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {new Date(order.createdAt).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>{getStatusBadge(order.status)}</TableCell>
+                          <TableCell className="font-semibold">
+                            ${order.totalAmount.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => setSelectedOrder(order)}
+                                >
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  View Details
+                                </DropdownMenuItem>
+                                {isAdmin && (
+                                  <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuLabel className="text-red-600 font-bold">
+                                      🔐 Admin Actions
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        updateOrderStatus(order.id, "CONFIRMED")
+                                      }
+                                      disabled={order.status === "CONFIRMED"}
+                                      className="text-green-600"
+                                    >
+                                      <CheckCircle className="mr-2 h-4 w-4" />
+                                      Confirm Order
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        updateOrderStatus(order.id, "SHIPPED")
+                                      }
+                                      disabled={order.status === "SHIPPED"}
+                                      className="text-blue-600"
+                                    >
+                                      <Truck className="mr-2 h-4 w-4" />
+                                      Mark as Shipped
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        updateOrderStatus(order.id, "DELIVERED")
+                                      }
+                                      disabled={order.status === "DELIVERED"}
+                                      className="text-purple-600"
+                                    >
+                                      <PackageCheck className="mr-2 h-4 w-4" />
+                                      Mark as Delivered
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        updateOrderStatus(order.id, "CANCELLED")
+                                      }
+                                      disabled={order.status === "CANCELLED"}
+                                      className="text-red-600"
+                                    >
+                                      <XCircle className="mr-2 h-4 w-4" />
+                                      Cancel Order
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </Card>
